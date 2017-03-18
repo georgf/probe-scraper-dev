@@ -17,4 +17,6 @@ pytest
 ## Output location
 The output from the scheduled job can be found at:
 
-https://analysis-output.telemetry.mozilla.org/probe-scraper/data/*.json
+* https://analysis-output.telemetry.mozilla.org/probe-scraper/data/general.json
+* https://analysis-output.telemetry.mozilla.org/probe-scraper/data/revisions.json
+* https://analysis-output.telemetry.mozilla.org/probe-scraper/data/probes.json
