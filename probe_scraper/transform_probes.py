@@ -66,6 +66,7 @@ def probes_equal(probe_type, probe1, probe2):
 
 def extract_node_data(node_id, channel, probe_type, probe_data, result_data):
     for name, probe in probe_data.iteritems():
+        # Telemetrys test probes are never submitted to the servers.
         if is_test_probe(probe_type, name):
             continue
 
@@ -77,12 +78,14 @@ def extract_node_data(node_id, channel, probe_type, probe_data, result_data):
             if probes_equal(probe_type, previous, probe):
                 previous["revisions"]["first"] = node_id
                 continue
+
         if id not in result_data:
             result_data[id] = {
                 "type": probe_type,
                 "name": name,
                 "history": {channel: []},
             }
+
         if channel not in result_data[id]["history"]:
             result_data[id]["history"][channel] = []
 
@@ -94,12 +97,15 @@ def extract_node_data(node_id, channel, probe_type, probe_data, result_data):
 
 
 def sorted_node_lists_by_channel(node_data):
+    print "... node data: " + str(node_data)
     channels = defaultdict(list)
-    for node_id, data in node_data.iteritems():
-        channels[data['channel']].append({
-            'node_id': node_id,
-            'version': data['version'],
-        })
+    for channel, nodes in node_data.iteritems():
+        for node_id, data in nodes.iteritems():
+            print "... data for node " + node_id + ": " + str(data)
+            channels[channel].append({
+                'node_id': node_id,
+                'version': data['version'],
+            })
 
     for channel, data in channels.iteritems():
         channels[channel] = sorted(data, key=lambda n: int(n["version"]), reverse=True)
@@ -115,8 +121,8 @@ def transform(probe_data, node_data):
         print "\n" + channel + " - transforming probe data:"
         for entry in channel_data:
             node_id = entry['node_id']
-            print "  from: " + str({"node": node_id, "version": node_data[node_id]["version"]})
-            for probe_type, probes in probe_data[node_id].iteritems():
+            print "  from: " + str({"node": node_id, "version": entry["version"]})
+            for probe_type, probes in probe_data[channel][node_id].iteritems():
                 extract_node_data(node_id, channel, probe_type, probes, result_data)
 
     return result_data
