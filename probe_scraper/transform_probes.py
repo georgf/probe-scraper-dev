@@ -97,7 +97,6 @@ def extract_node_data(node_id, channel, probe_type, probe_data, result_data):
 
 
 def sorted_node_lists_by_channel(node_data):
-    print "... node data: " + str(node_data)
     channels = defaultdict(list)
     for channel, nodes in node_data.iteritems():
         for node_id, data in nodes.iteritems():
